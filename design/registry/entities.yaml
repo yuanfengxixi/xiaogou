@@ -1,0 +1,555 @@
+# design/registry/entities.yaml
+# 小狗修仙 — 实体注册表（权威术语与数值字典）
+# 由 /consistency-check 从 7 份 GDD 反向生成 — 2026-04-21
+# 修改规则：先改 source GDD，再更新此处，再传播到 referenced_by 文档
+
+metadata:
+  project: 小狗修仙
+  last_updated: 2026-04-21
+  generated_by: reverse-document + consistency-check
+  total_entries: 80
+
+# ══════════════════════════════════════════════════
+# CONSTANTS — 跨系统引用的固定数值
+# ══════════════════════════════════════════════════
+
+constants:
+
+  REALM_REQUIRED:
+    source: design/gdd/cultivation-system.md
+    value: [100, 800, 2000, 5000, 10000, 99999]
+    unit: cultivation_points
+    desc: 各境界修为上限
+    referenced_by: [cultivation-system.md, game-concept.md, talent-system.md]
+
+  REALM_LIFESPAN:
+    source: design/gdd/cultivation-system.md
+    value: [80, 200, 500, 1200, 3000, 99999]
+    unit: years
+    desc: 各境界基础寿命
+    referenced_by: [cultivation-system.md, game-concept.md, economy.md]
+
+  REALM_BASE_CHANCE:
+    source: design/gdd/cultivation-system.md
+    value: [0.70, 0.55, 0.40, 0.25, 0.15]
+    unit: probability
+    desc: 各境界突破基础成功率
+    referenced_by: [cultivation-system.md, talent-system.md]
+
+  REALM_NAMES:
+    source: design/gdd/cultivation-system.md
+    value: ["练气期", "筑基期", "金丹期", "元婴期", "化神期", "飞升"]
+    referenced_by: [cultivation-system.md, story-system.md, task-system.md, title-collection.md]
+
+  REALM_ITEMS:
+    source: design/gdd/cultivation-system.md
+    value: ["", "筑基丹", "金丹", "元婴珠", "化神石", ""]
+    desc: 各境界突破所需道具（""表示无需）
+    referenced_by: [cultivation-system.md, economy.md]
+
+  talent_total_points:
+    source: design/gdd/talent-system.md
+    value: 20
+    unit: points
+    referenced_by: [talent-system.md, game-concept.md]
+
+  retreat_base_multiplier:
+    source: design/gdd/cultivation-system.md
+    value: 8
+    unit: cultivation_per_year
+    desc: 闭关基础修为产出系数
+    referenced_by: [cultivation-system.md]
+
+  breakthrough_failure_lifespan_cost:
+    source: design/gdd/cultivation-system.md
+    value: -15
+    unit: years
+    referenced_by: [cultivation-system.md, game-concept.md]
+
+  breakthrough_failure_item_consumed:
+    source: design/gdd/cultivation-system.md
+    value: true
+    desc: 突破失败道具同样消耗（两个分支均调用 remove_item）
+    # was: false in game-concept.md v0.9 — fixed 2026-04-21
+    referenced_by: [cultivation-system.md]
+
+  lifespan_pill_base_bonus:
+    source: design/gdd/economy.md
+    value: 50
+    unit: years
+    referenced_by: [economy.md, cultivation-system.md]
+
+  lifespan_pill_decay_per_use:
+    source: design/gdd/economy.md
+    value: 10
+    unit: years
+    desc: 每使用一次延寿丹效果递减量
+    referenced_by: [economy.md, cultivation-system.md]
+
+  lifespan_pill_effective_uses:
+    source: design/gdd/economy.md
+    value: 5
+    desc: 第6枚起 bonus=0，道具仍消耗
+    referenced_by: [economy.md, cultivation-system.md]
+
+  breakthrough_boost_amount:
+    source: design/gdd/cultivation-system.md
+    value: 0.20
+    unit: probability_additive
+    desc: 破境符给予的突破成功率加成
+    referenced_by: [cultivation-system.md, economy.md]
+
+  hidden_event_prestige_divisor:
+    source: design/gdd/economy.md
+    value: 100
+    desc: hidden_chance 公式中 prestige/(prestige+100) 的常数项
+    referenced_by: [economy.md, story-system.md]
+
+  task_score_best:
+    source: design/gdd/task-system.md
+    value: 30
+    referenced_by: [task-system.md]
+
+  task_score_mid:
+    source: design/gdd/task-system.md
+    value: 15
+    referenced_by: [task-system.md]
+
+  task_score_worst:
+    source: design/gdd/task-system.md
+    value: 5
+    referenced_by: [task-system.md]
+
+  task_max_score:
+    source: design/gdd/task-system.md
+    value: 90
+    desc: steps(3) × best_score(30)
+    referenced_by: [task-system.md]
+
+  family_passive_period:
+    source: design/gdd/talent-system.md
+    value: 10
+    unit: years
+    desc: 家族被动收入触发周期
+    referenced_by: [talent-system.md, economy.md]
+
+  family_request_cd:
+    source: design/gdd/talent-system.md
+    value: 30
+    unit: years
+    desc: 家族主动援助冷却时间
+    referenced_by: [talent-system.md, economy.md]
+
+  insight_min_years:
+    source: design/gdd/cultivation-system.md
+    value: 10
+    unit: years
+    desc: 触发顿悟的最短闭关年数
+    referenced_by: [cultivation-system.md]
+
+  insight_fixed_value:
+    source: design/gdd/cultivation-system.md
+    value: 50
+    unit: cultivation_points
+    desc: 顿悟触发时的固定修为加值（乘以 luck_multiplier 后计入）
+    referenced_by: [cultivation-system.md]
+
+  calamity_min_years:
+    source: design/gdd/cultivation-system.md
+    value: 30
+    unit: years
+    desc: 触发天劫的最短闭关年数
+    referenced_by: [cultivation-system.md]
+
+  calamity_chance:
+    source: design/gdd/cultivation-system.md
+    value: 0.05
+    unit: probability
+    referenced_by: [cultivation-system.md]
+
+  calamity_lifespan_cost:
+    source: design/gdd/cultivation-system.md
+    value: -20
+    unit: years
+    referenced_by: [cultivation-system.md]
+
+  title_count:
+    source: design/gdd/title-collection.md
+    value: 14
+    referenced_by: [title-collection.md]
+
+  story_normal_pool_size:
+    source: design/gdd/story-system.md
+    value: 10
+    referenced_by: [story-system.md, game_design.md]
+
+  story_hidden_pool_current:
+    source: design/gdd/story-system.md
+    value: 4
+    note: "目标 25 条（练气5/筑基5/金丹5/元婴5/化神5）"
+    referenced_by: [story-system.md, game_design.md]
+
+  story_hidden_pool_target:
+    source: design/gdd/story-system.md
+    value: 25
+    referenced_by: [story-system.md]
+
+  story_normal_choices_per_event:
+    source: design/gdd/story-system.md
+    value: 4
+    referenced_by: [story-system.md]
+
+  story_hidden_rounds_min:
+    source: design/gdd/story-system.md
+    value: 3
+    referenced_by: [story-system.md]
+
+  story_hidden_rounds_max:
+    source: design/gdd/story-system.md
+    value: 5
+    referenced_by: [story-system.md]
+
+  crush_threshold:
+    source: design/gdd/story-system.md
+    value: 2
+    desc: 玩家境界超过事件推荐境界多少时触发碾压模式
+    referenced_by: [story-system.md]
+
+  breakthrough_success_prestige_bonus:
+    source: design/gdd/cultivation-system.md
+    value: 10
+    desc: 突破成功顿悟副奖励声望值
+    referenced_by: [cultivation-system.md]
+
+# ══════════════════════════════════════════════════
+# FORMULAS — 跨系统引用的计算公式
+# ══════════════════════════════════════════════════
+
+formulas:
+
+  speed_multiplier:
+    source: design/gdd/talent-system.md
+    expression: "1.0 + (talent_speed - 5) * 0.1"
+    variables:
+      talent_speed: "0-20"
+    output_range: "0.5 - 2.5"
+    referenced_by: [talent-system.md, cultivation-system.md]
+
+  luck_multiplier:
+    source: design/gdd/talent-system.md
+    expression: "1.0 + (talent_luck - 5) * 0.1"
+    variables:
+      talent_luck: "0-20"
+    output_range: "0.5 - 2.5"
+    referenced_by: [talent-system.md, cultivation-system.md, story-system.md, economy.md]
+
+  breakthrough_chance:
+    source: design/gdd/cultivation-system.md
+    expression: "clamp(REALM_BASE_CHANCE[realm] + (talent_luck - 5) * 0.04 + breakthrough_boost, 0.10, 0.95)"
+    variables:
+      realm: "0-4"
+      talent_luck: "0-20"
+      breakthrough_boost: "0.0 or 0.20"
+    output_range: "0.10 - 0.95"
+    referenced_by: [cultivation-system.md, talent-system.md]
+
+  insight_rate:
+    source: design/gdd/cultivation-system.md
+    expression: "clamp(0.10 + (talent_luck - 5) * 0.02, 0.03, 0.30)"
+    variables:
+      talent_luck: "0-20"
+    output_range: "0.03 - 0.30"
+    note: "仅 retreat years >= 10 时有效"
+    referenced_by: [cultivation-system.md, talent-system.md]
+
+  cultivation_gain:
+    source: design/gdd/cultivation-system.md
+    expression: "(years * 8 + insight_value) * speed_multiplier"
+    variables:
+      years: "1+"
+      insight_value: "0 or 50*luck_multiplier"
+      speed_multiplier: "0.5-2.5"
+    referenced_by: [cultivation-system.md]
+
+  hidden_chance:
+    source: design/gdd/economy.md
+    expression: "prestige / (prestige + 100) * luck_multiplier"
+    variables:
+      prestige: "any int (can be negative)"
+      luck_multiplier: "0.5-2.5"
+    output_range: "0.0 - <luck_multiplier"
+    referenced_by: [economy.md, story-system.md]
+
+  family_init_gold:
+    source: design/gdd/talent-system.md
+    expression: "talent_family * 20"
+    variables:
+      talent_family: "0-20"
+    output_range: "0 - 400"
+    referenced_by: [talent-system.md, economy.md]
+
+  family_passive_gold:
+    source: design/gdd/talent-system.md
+    expression: "talent_family * 5  (every 10 years)"
+    variables:
+      talent_family: "0-20"
+    output_range: "0 - 100 per trigger"
+    referenced_by: [talent-system.md, economy.md]
+
+  family_request_gold:
+    source: design/gdd/talent-system.md
+    expression: "talent_family * 30  (30-year cooldown)"
+    variables:
+      talent_family: "0-20"
+    output_range: "0 - 600"
+    referenced_by: [talent-system.md, economy.md]
+
+  lifespan_pill_bonus:
+    source: design/gdd/economy.md
+    expression: "max(0, 50 - lifespan_pill_used * 10)"
+    variables:
+      lifespan_pill_used: "0+"
+    output_range: "50/40/30/20/10/0/0/..."
+    referenced_by: [economy.md, cultivation-system.md]
+
+  task_grade_percentage:
+    source: design/gdd/task-system.md
+    expression: "int(score / max_score * 100)"
+    variables:
+      score: "sum of step scores"
+      max_score: "steps * 30 = 90"
+    output_range: "0 - 100"
+    referenced_by: [task-system.md]
+
+  breakthrough_insight_chance:
+    source: design/gdd/cultivation-system.md
+    expression: "0.20 + (talent_luck - 5) * 0.02"
+    variables:
+      talent_luck: "0-20"
+    note: "突破成功后的副骰，奖励 prestige+10 + 一阶聚灵丹"
+    referenced_by: [cultivation-system.md]
+
+  crush_gold_spare:
+    source: design/gdd/story-system.md
+    expression: "orig_best_gold * 1.5"
+    variables:
+      orig_best_gold: "事件中最高 gold 选项的值"
+    referenced_by: [story-system.md]
+
+  crush_gold_kill:
+    source: design/gdd/story-system.md
+    expression: "orig_best_gold * (2 + diff)"
+    variables:
+      orig_best_gold: "事件中最高 gold 选项的值"
+      diff: "player_realm - event.suggested_realm"
+    referenced_by: [story-system.md]
+
+# ══════════════════════════════════════════════════
+# ITEMS — 道具跨系统属性
+# ══════════════════════════════════════════════════
+
+items:
+
+  筑基丹:
+    source: design/gdd/cultivation-system.md
+    type: 突破材料
+    market_price: 500
+    realm_required: 0
+    effect: "练气→筑基突破必需"
+    referenced_by: [cultivation-system.md, economy.md, title-collection.md]
+
+  金丹:
+    source: design/gdd/cultivation-system.md
+    type: 突破材料
+    market_price: 1200
+    realm_required: 1
+    effect: "筑基→金丹突破必需"
+    referenced_by: [cultivation-system.md, economy.md, title-collection.md]
+
+  元婴珠:
+    source: design/gdd/cultivation-system.md
+    type: 突破材料
+    market_price: 2500
+    realm_required: 2
+    effect: "金丹→元婴突破必需"
+    referenced_by: [cultivation-system.md, economy.md, title-collection.md]
+
+  化神石:
+    source: design/gdd/cultivation-system.md
+    type: 突破材料
+    market_price: 5000
+    realm_required: 3
+    effect: "元婴→化神突破必需"
+    referenced_by: [cultivation-system.md, economy.md, title-collection.md]
+
+  延寿丹:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 300
+    base_bonus: 50
+    decay_per_use: 10
+    effective_uses: 5
+    effect: "寿命+50→40→30→20→10→0 (递减), 第6枚起无效但仍消耗"
+    referenced_by: [economy.md, cultivation-system.md, task-system.md, title-collection.md]
+
+  一阶聚灵丹:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 200
+    realm_required: 0
+    cultivation_bonus: 20
+    referenced_by: [economy.md, cultivation-system.md, title-collection.md]
+
+  二阶聚灵丹:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 500
+    realm_required: 1
+    cultivation_bonus: 160
+    referenced_by: [economy.md, cultivation-system.md, title-collection.md]
+
+  三阶聚灵丹:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 1000
+    realm_required: 2
+    cultivation_bonus: 400
+    referenced_by: [economy.md, title-collection.md]
+
+  四阶聚灵丹:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 2000
+    realm_required: 3
+    cultivation_bonus: 1000
+    referenced_by: [economy.md, title-collection.md]
+
+  五阶聚灵丹:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 4000
+    realm_required: 4
+    cultivation_bonus: 2000
+    referenced_by: [economy.md, title-collection.md]
+
+  一阶破境符:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 500
+    realm_required: 0
+    breakthrough_boost: 0.20
+    one_time: true
+    referenced_by: [economy.md, cultivation-system.md, title-collection.md]
+
+  二阶破境符:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 1000
+    realm_required: 1
+    breakthrough_boost: 0.20
+    one_time: true
+    referenced_by: [economy.md, cultivation-system.md, title-collection.md]
+
+  三阶破境符:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 1800
+    realm_required: 2
+    breakthrough_boost: 0.20
+    one_time: true
+    referenced_by: [economy.md, title-collection.md]
+
+  四阶破境符:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 3000
+    realm_required: 3
+    breakthrough_boost: 0.20
+    one_time: true
+    referenced_by: [economy.md, title-collection.md]
+
+  五阶破境符:
+    source: design/gdd/economy.md
+    type: 消耗品
+    market_price: 4500
+    realm_required: 4
+    breakthrough_boost: 0.20
+    one_time: true
+    referenced_by: [economy.md, title-collection.md]
+
+# ══════════════════════════════════════════════════
+# ENTITIES — 跨系统命名实体
+# ══════════════════════════════════════════════════
+
+entities:
+
+  realm:
+    source: design/gdd/cultivation-system.md
+    count: 6
+    values: [0, 1, 2, 3, 4, 5]
+    names: ["练气期", "筑基期", "金丹期", "元婴期", "化神期", "飞升"]
+    terminal_value: 5
+    referenced_by: [cultivation-system.md, talent-system.md, story-system.md, task-system.md, title-collection.md, game-concept.md]
+
+  talent_types:
+    source: design/gdd/talent-system.md
+    values: [speed, luck, family]
+    total_points: 20
+    min_per_type: 0
+    referenced_by: [talent-system.md, cultivation-system.md, economy.md, story-system.md]
+
+  task_grade:
+    source: design/gdd/task-system.md
+    grades: ["SSS", "SS", "S", "A", "B", "C", "D"]
+    thresholds: {SSS: 90, SS: 75, S: 60, A: 45, B: 30, C: 15, D: 0}
+    referenced_by: [task-system.md, economy.md]
+
+  title:
+    source: design/gdd/title-collection.md
+    count: 14
+    categories: [realm, prestige, gold, years_passed, lifespan]
+    irrevocable: true
+    referenced_by: [title-collection.md, game-concept.md]
+
+  story_normal_event:
+    source: design/gdd/story-system.md
+    pool_size: 10
+    choices_per_event: 4
+    value_bounds:
+      gold: {min: -50, max: 150}
+      prestige: {min: -30, max: 30}
+      lifespan: {min: -7, max: -1}
+      cultivation: 0
+    referenced_by: [story-system.md, economy.md]
+
+  story_hidden_event:
+    source: design/gdd/story-system.md
+    pool_current: 4
+    pool_target: 25
+    rounds: {min: 3, max: 5}
+    choices_per_round: {min: 2, max: 4}
+    value_bounds:
+      gold: {min: 80, max: 300}
+      prestige: {min: 15, max: 80}
+      lifespan: {min: -4, max: -1}
+      cultivation: 0
+    referenced_by: [story-system.md, economy.md]
+
+  task:
+    source: design/gdd/task-system.md
+    pool_size: 6
+    steps_per_task: 3
+    choices_per_step: 3
+    score_values: [30, 15, 5]
+    max_score: 90
+    referenced_by: [task-system.md, economy.md]
+
+  prestige_title_thresholds:
+    source: design/gdd/title-collection.md
+    values: [20, 80, 200, 500]
+    referenced_by: [title-collection.md, economy.md]
+
+  gold_title_thresholds:
+    source: design/gdd/title-collection.md
+    values: [200, 800]
+    referenced_by: [title-collection.md, economy.md]

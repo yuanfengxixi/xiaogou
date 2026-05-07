@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "allow": [
+      "Bash(git clone *)",
+      "Bash(godot --headless --check-only --quit)",
+      "WebFetch(domain:github.com)",
+      "Skill(setup-engine)",
+      "Skill(reverse-document)",
+      "Bash(node *)",
+      "Skill(design-system)",
+      "Bash(command -v godot)",
+      "Read(//c/Program Files/**)",
+      "Bash(ls \"/c/Godot\"*)",
+      "Read(//c/Users/Administrator/**)",
+      "Bash(\"/c/Users/Administrator/Desktop/Godot_v4.6.2-stable_win64_console.exe\" --headless --check-only --quit --path .)",
+      "Bash(\"/c/Users/Administrator/Desktop/Godot_v4.6.2-stable_win64_console.exe\" --headless --check-only --script minigame_schulte.gd --quit --path .)",
+      "Read(//d/d/game/xiaogou/.godot/**)",
+      "Bash(\"/c/Users/Administrator/Desktop/Godot_v4.6.2-stable_win64_console.exe\" --headless --quit --path .)",
+      "Bash(timeout 5 \"/c/Users/Administrator/Desktop/Godot_v4.6.2-stable_win64_console.exe\" --headless --path .)",
+      "Bash(rm -f .godot/global_script_class_cache.cfg)",
+      "Bash(timeout 10 \"/c/Users/Administrator/Desktop/Godot_v4.6.2-stable_win64_console.exe\" --headless --editor --quit --path .)",
+      "Bash(timeout 12 \"/c/Users/Administrator/Desktop/Godot_v4.6.2-stable_win64_console.exe\" --headless --editor --quit --path .)",
+      "Bash(npm --version)",
+      "Bash(pip show *)",
+      "Bash(pip install *)",
+      "Bash(KIMI_API_KEY=test python mcp-server/server.py --version)",
+      "Bash(python *)",
+      "mcp__kimi-copy__generate_copy",
+      "Bash(env)",
+      "Skill(update-config)",
+      "Skill(design-review)"
+    ]
+  }
+}

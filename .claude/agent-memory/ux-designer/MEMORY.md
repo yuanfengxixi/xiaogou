@@ -1,0 +1,2 @@
+- [小狗修仙 — Project Context](project_xiaogou.md) — Godot 4.6, pure-code UI, touch+mouse, no art assets; opening flow under active design
+- [User Profile](user_profile.md) — solo dev, expects adversarial specific critique, uses formal GDD workflow with 8-section standard

@@ -1,0 +1,48 @@
+# Godot 4
+.godot/
+.import/
+*.import
+export.cfg
+export_credentials.cfg
+build/
+*.apk
+*.idsig
+*.aab
+
+# Obsidian 个人配置（不入仓）
+.obsidian/workspace*
+.obsidian/cache
+.obsidian/appearance.json
+.obsidian/hotkeys.json
+.obsidian/graph.json
+
+# 保留团队共享部分
+!.obsidian/plugins/
+!.obsidian/snippets/
+!.obsidian/themes/
+!.obsidian/templates.json
+!.obsidian/dataview.json
+!.obsidian/community-plugins.json
+!.obsidian/core-plugins.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+
+# CCGS 临时状态
+production/session-state/
+production/session-logs/
+
+# Claude Code 本地缓存
+.claude.backup/
+.claudian/sessions/

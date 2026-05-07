@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "kimi-copy": {
+      "command": "python",
+      "args": ["mcp-server/server.py"],
+      "env": {
+        "NO_PROXY": "api.moonshot.cn",
+        "no_proxy": "api.moonshot.cn",
+        "ALL_PROXY": "",
+        "all_proxy": "",
+        "HTTPS_PROXY": "",
+        "https_proxy": "",
+        "HTTP_PROXY": "",
+        "http_proxy": ""
+      }
+    }
+  }
+}
