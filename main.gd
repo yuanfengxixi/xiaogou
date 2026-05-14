@@ -6,6 +6,7 @@ var task
 var talent
 var items
 var reincarnation
+var hex
 var game
 
 func _ready():
@@ -15,6 +16,7 @@ func _ready():
 	talent        = load("res://talent.gd").new()
 	items         = load("res://items.gd").new()
 	reincarnation = load("res://reincarnation.gd").new()
+	hex           = load("res://hex.gd").new()
 	game          = load("res://game.gd").new()
 
 	add_child(player)
@@ -23,6 +25,7 @@ func _ready():
 	add_child(talent)
 	add_child(items)
 	add_child(reincarnation)
+	add_child(hex)
 	add_child(game)
 
 	# 转世遗赠：读盘 + 注入 talent / player 起始值
@@ -81,4 +84,4 @@ func _ready():
 	choices_box.add_theme_constant_override("separation", UITheme.CHOICE_SEP)
 	scroll.add_child(choices_box)
 
-	game.setup(player, story, task, talent, items, reincarnation, story_label, stats_label, choices_box, margin, overlay)
+	game.setup(player, story, task, talent, items, reincarnation, hex, story_label, stats_label, choices_box, margin, overlay)

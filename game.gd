@@ -9,6 +9,7 @@ enum State {NAME_INPUT, TALENT_ALLOCATE, FACTION_SELECT, FREE, RETREAT_SELECT, S
 			EXAM_STOPLINE,
 			EXAM_GATE_INTRO, EXAM_GATE_Q, EXAM_GATE_ANS,
 			EXAM_CAOMEN,
+			HEX_DRAW, HEX_RESULT,
 			CHRONICLE}
 var current_state = State.NAME_INPUT
 
@@ -18,6 +19,7 @@ var task
 var talent
 var items_node
 var reincarnation
+var hex
 var story_label
 var stats_label
 var choices_box
@@ -432,13 +434,14 @@ const GATE_PUZZLE: Dictionary = {
 	],
 }
 
-func setup(p, s, t, tal, itm, rein, story_lb, stats_lb, choices_b, main_r = null, overlay_r = null):
+func setup(p, s, t, tal, itm, rein, hx, story_lb, stats_lb, choices_b, main_r = null, overlay_r = null):
 	player       = p
 	story        = s
 	task         = t
 	talent       = tal
 	items_node   = itm
 	reincarnation = rein
+	hex          = hx
 	story_label  = story_lb
 	stats_label  = stats_lb
 	choices_box  = choices_b
@@ -652,7 +655,7 @@ func _on_faction_chosen(faction_name: String, prestige_change: int):
 	)
 	_update_stats()
 	_clear_choices()
-	_add_button("开始修行 →", show_free)
+	_add_button("开始修行 →", func(): _start_hex_draw("start", show_free))
 
 func _on_choose_rogue():
 	player.faction = "散修"
@@ -668,7 +671,7 @@ func _on_choose_rogue():
 	)
 	_update_stats()
 	_clear_choices()
-	_add_button("开始修行 →", show_free)
+	_add_button("开始修行 →", func(): _start_hex_draw("start", show_free))
 
 # ── STATE: EXAM 宗门考核（守一门）────────────────────────────────
 
@@ -865,7 +868,7 @@ func _on_exam_passed() -> void:
 	# 编年史
 	player.add_life_entry(player.age, player.age, "join",
 		"通过考核，拜入" + player.faction + "，从此为门下弟子。")
-	show_free()
+	_start_hex_draw("start", show_free)
 
 # ── 考核入口 — 按宗门分流 ──────────────────────────────────────
 
@@ -2137,7 +2140,72 @@ func _show_breakthrough_reaction():
 	story_label.text = text
 	_update_stats()
 	_clear_choices()
-	_add_button("继续修行 →", _continue_or_popup.bind(show_free))
+	_add_button("继续修行 →", func(): _continue_or_popup(func(): _start_hex_draw("breakthrough", show_free)))
+
+# ── STATE: HEX_DRAW / HEX_RESULT 海克斯抽取 ────────────────────
+#  触发：开局拜入宗门 / 选择散修后；突破成功（非飞升）后
+#  无刷新；3 个选项必选其一
+func _start_hex_draw(timing: String, next_cb: Callable):
+	if hex == null:
+		next_cb.call()
+		return
+	if player.realm >= player.REALMS.size() - 1:
+		# 飞升状态保险：不抽海克斯，直走 next
+		next_cb.call()
+		return
+	var tier: String = hex.draw_tier()
+	var options: Array = hex.draw_options(tier, player)
+	if options.is_empty():
+		next_cb.call()
+		return
+	_show_hex_options(tier, options, timing, next_cb)
+
+func _show_hex_options(tier: String, options: Array, timing: String, next_cb: Callable):
+	current_state = State.HEX_DRAW
+	var tier_label: String = hex.TIER_LABELS.get(tier, tier)
+	var timing_label: String = "突破之后" if timing == "breakthrough" else "踏入修行之初"
+	var text = "═══ 海克斯 · " + tier_label + "档 ═══\n\n"
+	text += "（" + timing_label + "天地垂下一线机缘，三选其一，无法刷新）\n\n"
+	for h in options:
+		text += "▸【" + tier_label + "】" + h["name"] + "  · " + h["category"] + "类\n"
+		text += "    " + h["blurb"] + "\n\n"
+	story_label.text = text
+	_update_stats()
+	_clear_choices()
+	for h in options:
+		var btn_text: String = "选【" + h["name"] + "】 — " + _hex_effect_brief(h)
+		_add_button(btn_text, _on_hex_pick.bind(h, next_cb))
+
+func _hex_effect_brief(h: Dictionary) -> String:
+	var parts: Array = []
+	for e in h["effects"]:
+		match e["type"]:
+			"gold":               parts.append("灵石+" + str(int(e["value"])))
+			"cult_pct":           parts.append("修为+本境界" + str(int(e["value"])) + "%")
+			"talent_speed":       parts.append("修行天赋+" + str(int(e["value"])))
+			"talent_luck":        parts.append("气运+" + str(int(e["value"])))
+			"qiyun":              parts.append("气运+" + str(int(e["value"])))
+			"item":               parts.append("获得【" + str(e["value"]) + "】")
+			"item_realm_juling":  parts.append("获得当前境界聚灵丹")
+			"item_realm_pojing":  parts.append("获得当前境界破境符")
+	return "，".join(parts)
+
+func _on_hex_pick(h: Dictionary, next_cb: Callable):
+	var msgs: Array = hex.apply(h, player, items_node)
+	_show_hex_result(h, msgs, next_cb)
+
+func _show_hex_result(h: Dictionary, msgs: Array, next_cb: Callable):
+	current_state = State.HEX_RESULT
+	var text = "═══ 海克斯铭刻 ═══\n\n"
+	text += "你选择了【" + h["name"] + "】。\n"
+	text += h["blurb"] + "\n\n"
+	for m in msgs:
+		text += "  · " + m + "\n"
+	text += _stats_footer()
+	story_label.text = text
+	_update_stats()
+	_clear_choices()
+	_add_button("继续修行 →", _continue_or_popup.bind(next_cb))
 
 # ── STATE: RESULT 结算界面 ────────────────────────────────────
 

@@ -23,6 +23,9 @@ var talent_luck   = 0   # = 气运；起手 0；通过气运丹消耗或重要 N
 var lifespan_pill_used = 0  # 已使用延寿丹次数（药效递减用）
 var breakthrough_boost = 0.0  # 破境符激活的额外突破成功率（一次性）
 
+# 海克斯：已抽中的 hex id 列表（含开局 + 突破触发，供图鉴 / 复盘用）
+var hex_log: Array = []
+
 # 编年史：玩家一生重大事件按年龄段聚合记录
 # entry schema: {age_start: int, age_end: int, type: String, text: String}
 # type 取值：birth / join / rogue / retreat / story / breakthrough / death
