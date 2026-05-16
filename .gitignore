@@ -4,7 +4,7 @@
 *.import
 export.cfg
 export_credentials.cfg
-build/
+/build/
 *.apk
 *.idsig
 *.aab

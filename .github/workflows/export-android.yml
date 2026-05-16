@@ -1,0 +1,56 @@
+name: Export Android APK (debug)
+
+# 触发：手动 + main 分支 push（忽略文档）
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'design/**'
+      - 'docs/**'
+
+env:
+  GODOT_VERSION: 4.6
+  EXPORT_NAME: xiaogouxiuxian
+  PRESET_NAME: Android
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.6
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup export templates
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/* \
+             ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+
+      - name: Export debug APK
+        run: |
+          mkdir -v -p build
+          godot --headless --path . \
+            --export-debug "${PRESET_NAME}" "build/${EXPORT_NAME}-debug.apk"
+          ls -lh build/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.EXPORT_NAME }}-debug-apk
+          path: build/*.apk
+          retention-days: 30
+
+# ── release 模式扩展（手动添加）─────────────────────────────────
+# 需先在 repo Settings → Secrets and variables → Actions 添加：
+#   ANDROID_KEYSTORE_BASE64  ── base64 编码的 release.keystore
+#   ANDROID_KEY_ALIAS        ── keystore 别名
+#   ANDROID_KEY_PASS         ── keystore 密码
+# 生成 base64：base64 -w0 release.keystore > keystore.b64
+# 然后加 job 解码到 /root/release.keystore，调 --export-release
