@@ -51,11 +51,11 @@
 
 ## 技术栈
 
-- **引擎**：Godot 4.6（Forward+ 渲染，无物理）
+- **引擎**：Godot 4.6（GL Compatibility 渲染器，无 3D 物理模拟）
 - **语言**：GDScript（静态类型 + signal 架构）
 - **持久化**：`ConfigFile` (`user://reincarnation.cfg`)
 - **平台**：PC（Steam / itch）、Android（触屏全适配，最小按钮 64px）
-- **测试**：GUT (Godot Unit Test)
+- **测试**：Godot headless `SceneTree` 单元测试，覆盖玩家数值、天赋分配、任务 handler 和海克斯效果
 
 ## 项目结构
 
@@ -75,6 +75,8 @@ xiaogou/
 ├── vault-meta/          # Obsidian 模板和提示词
 ├── production/          # 制作管理（sprint/decision/devlog/roadmap）
 ├── .claude/             # CCGS 48 agent 配置 + skills + hooks
+├── tests/               # Godot headless 单元测试（player / talent / task / hex）
+│   └── run-unit-tests.sh
 └── CLAUDE.md            # Agent 协作规范
 ```
 
@@ -90,6 +92,14 @@ xiaogou/
 git clone https://github.com/yuanfengxixi/xiaogou.git
 cd xiaogou
 # Godot Editor 打开 project.godot → F5 运行
+```
+
+### 运行单元测试
+
+安装 Godot 4.6 后，在仓库根目录运行：
+
+```bash
+bash tests/run-unit-tests.sh
 ```
 
 ### 导出
@@ -120,7 +130,7 @@ cd xiaogou
 - [x] 转世遗赠 meta progression（B 模式累加）
 - [x] 5 境界突破系统 + 4 突破小游戏
 - [x] 隐藏机缘事件多步骤协议
-- [ ] 单测覆盖核心数值逻辑（player / talent / task）
+- [x] 单测覆盖核心逻辑（player / talent / task / hex）
 - [ ] Android 包导出 + 触屏适配实测
 - [ ] 命格起源系统（origin-mechanism）
 - [ ] 心魔干扰系统（psychology-distraction）

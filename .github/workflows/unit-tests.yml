@@ -1,0 +1,17 @@
+name: Godot unit tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.6
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Run headless unit tests
+        run: bash tests/run-unit-tests.sh
