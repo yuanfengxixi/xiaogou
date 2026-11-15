@@ -127,10 +127,10 @@ cd xiaogou
 
 ## License
 
-待定（项目内部开发中）。
+This project is licensed under the [MIT License](LICENSE). The `.claude/` agent configuration includes material from Claude Code Game Studios; its original MIT notice and source are recorded in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Obsidian workspace files and bundled community plugins are not part of this repository.
 
 ## Credits
 
 - **Game Design / Code**：yuanfengxixi
 - **Engine**：[Godot Engine](https://godotengine.org/)（MIT）
-- **Dev Framework**：[Claude Code Game Studios](https://github.com/anthropics/claude-code) 多 Agent 协作
+- **Dev Framework**：[Claude Code Game Studios](https://github.com/Donchitos/Claude-Code-Game-Studios) 多 Agent 协作
