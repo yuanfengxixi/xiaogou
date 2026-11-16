@@ -24,6 +24,12 @@ const GOLD_INHERIT_RATE_ASCEND := 1.00
 # 起手灵石基线（与 game.gd _show_faction_select 原 player.gold = 40 对应）
 const START_GOLD_BASE := 40
 
+# Constructor override allows tests to exercise persistence without touching the player's save file.
+var _save_path: String = SAVE_PATH
+
+func _init(save_path: String = SAVE_PATH) -> void:
+	_save_path = save_path
+
 # 持久化字段（disk → mem，main.gd 调用 load_from_disk 后注入）
 var lives: int = 0
 var total_ascensions: int = 0
@@ -34,7 +40,7 @@ var bonus_start_luck: int = 0
 # 从 user:// 读盘；无存档则保持默认 0 值
 func load_from_disk() -> void:
 	var cfg = ConfigFile.new()
-	var err = cfg.load(SAVE_PATH)
+	var err = cfg.load(_save_path)
 	if err != OK:
 		return
 	lives = cfg.get_value("meta", "lives", 0)
@@ -50,7 +56,7 @@ func save_to_disk() -> void:
 	cfg.set_value("bonus", "talent_points", bonus_talent_points)
 	cfg.set_value("bonus", "start_gold", bonus_start_gold)
 	cfg.set_value("bonus", "start_luck", bonus_start_luck)
-	cfg.save(SAVE_PATH)
+	cfg.save(_save_path)
 
 # 起手注入：把累计 bonus 写入 talent / player；main.gd 在 add_child 后调用
 # - talent.total_points 决定来世铭印分配池；talent_speed/luck 仍 0（待玩家分配）
