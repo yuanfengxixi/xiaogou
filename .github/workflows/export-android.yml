@@ -1,8 +1,13 @@
 name: Export Android APK (debug)
 
-# 触发：手动 + main 分支 push（忽略文档）
+# 触发：手动、代码 PR 和 main 分支 push（忽略文档）
 on:
   workflow_dispatch:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'design/**'
+      - 'docs/**'
   push:
     branches: [main]
     paths-ignore:
@@ -26,6 +31,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: true
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
 
       - name: Setup export templates
         run: |
