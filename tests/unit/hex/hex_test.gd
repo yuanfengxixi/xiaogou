@@ -8,6 +8,7 @@ extends SceneTree
 var _pass: int = 0
 var _fail: int = 0
 var _fail_msgs: Array = []
+var _owned_nodes: Array[Node] = []
 
 func _init() -> void:
 	print("═══ hex.gd 单元测试 ═══")
@@ -33,6 +34,10 @@ func _init() -> void:
 	_report()
 
 func _report() -> void:
+	for node in _owned_nodes:
+		if is_instance_valid(node):
+			node.free()
+	_owned_nodes.clear()
 	print("\n─── 结果 ───")
 	print("通过 %d / 失败 %d" % [_pass, _fail])
 	if _fail > 0:
@@ -57,6 +62,7 @@ func _expect(cond: bool, name: String, detail: String = "") -> void:
 # ── 工具 ──────────────────────────────────────────────────────
 func _make_player() -> Node:
 	var P = load("res://player.gd").new()
+	_owned_nodes.append(P)
 	P.realm = 0
 	P.cultivation = 0
 	P.gold = 0
@@ -67,7 +73,9 @@ func _make_player() -> Node:
 	return P
 
 func _load_hex() -> Node:
-	return load("res://hex.gd").new()
+	var hex = load("res://hex.gd").new()
+	_owned_nodes.append(hex)
+	return hex
 
 # ── 池容量 ───────────────────────────────────────────────────
 func test_pool_each_tier_has_10_entries() -> void:
