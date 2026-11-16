@@ -9,21 +9,8 @@ export_credentials.cfg
 *.idsig
 *.aab
 
-# Obsidian 个人配置（不入仓）
-.obsidian/workspace*
-.obsidian/cache
-.obsidian/appearance.json
-.obsidian/hotkeys.json
-.obsidian/graph.json
-
-# 保留团队共享部分
-!.obsidian/plugins/
-!.obsidian/snippets/
-!.obsidian/themes/
-!.obsidian/templates.json
-!.obsidian/dataview.json
-!.obsidian/community-plugins.json
-!.obsidian/core-plugins.json
+# Obsidian is a local authoring environment, not part of the Godot game.
+.obsidian/
 
 # IDE
 .vscode/
